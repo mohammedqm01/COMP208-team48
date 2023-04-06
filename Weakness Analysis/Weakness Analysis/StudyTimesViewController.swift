@@ -10,23 +10,23 @@ import UIKit
 class StudyTimesViewController: UITableViewController {
     
 
-    var modulePercentages: [String:Int] = [:]
     var studyTimes: [String:Int] = [:]
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Register the cell reuse identifier
+        // Register cell
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "StudyTimeCell")
         
-        // Set the data source and delegate for the table view
+        //Table view:
         tableView.dataSource = self
         tableView.delegate = self
         
-        // Calculate the study times
+        // Calculate study times function:
         studyTimes = calculateStudyTime(modulePercentages: modules, totalStudyHours: hours)
-        print(studyTimes)
         tableView.reloadData()
+        //Testing for to check if function remains working, hours should be indirectly proportionate to their score, remove once finished with this section:
+        print(studyTimes)
     }
     
     func calculateStudyTime(modulePercentages: [String:Int], totalStudyHours: Int) -> [String:Int] {
@@ -35,20 +35,24 @@ class StudyTimesViewController: UITableViewController {
 
 
         // Calculate total percentage
-        for (_, percentage) in modulePercentages {
+        for (_, percentage) in modulePercentages
+        {
             totalPercentage += percentage
         }
 
-        // Calculate study time for each module indirectly proportionate to the percentage score
-        var totalStudyTime = 0
-        for (moduleName, percentage) in modulePercentages {
+        /* Calculate study time for each module indirectly proportionate to the percentage score
+         * So the higher your score the less allocated revision time is for that module
+         */
+         var totalStudyTime = 0
+        for (moduleName, percentage) in modulePercentages
+        {
             let percentageOfTotal = Double(percentage) / Double(totalPercentage)
             let studyTime = Int(Double(totalStudyHours) * (1 / percentageOfTotal))
-            studyTimes[moduleName] = studyTime
             totalStudyTime += studyTime
+            studyTimes[moduleName] = studyTime
         }
 
-        // Normalize study times based on the total number of study hours
+        // Sort study times based on number of study hours
         let ratio = Double(totalStudyHours) / Double(totalStudyTime)
         for (moduleName, studyTime) in studyTimes {
             studyTimes[moduleName] = Int(Double(studyTime) * ratio)
@@ -69,12 +73,10 @@ class StudyTimesViewController: UITableViewController {
         // Create a new UILabel for the study time and add it to the cell's contentView
         let studyTimeLabel = UILabel()
         studyTimeLabel.text = "\(studyTime) hours"
-        studyTimeLabel.textColor = .gray
-        studyTimeLabel.font = UIFont.systemFont(ofSize: 12)
         studyTimeLabel.translatesAutoresizingMaskIntoConstraints = false
         cell.contentView.addSubview(studyTimeLabel)
         
-        // Add constraints to position the label to the right of the cell
+        // Constraints to move the studyTimeLabel to the right...Don't know if their is a better way to do this but this works
         studyTimeLabel.trailingAnchor.constraint(equalTo: cell.contentView.trailingAnchor, constant: -15).isActive = true
         studyTimeLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor).isActive = true
         

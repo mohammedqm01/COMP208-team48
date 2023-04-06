@@ -39,23 +39,35 @@ class ViewController: UIViewController {
     {
         if (moduleField.text == "")
         {
-            moduletext.text = "Enter a module"
+            moduletext.text = "Enter a module!"
         }
         if (marksField.text == "")
         {
-            marktext.text = "Enter a mark"
+            marktext.text = "Enter a percentage!"
         }
-        else
+        var percent = Int(marksField.text!)
+        if percent != nil
         {
-            moduletext.text = ""
-            marktext.text = ""
-
-            modules[moduleField.text!] = Int(marksField.text!)
-            marksField.text = ""
-            moduleField.text = ""
-            count+=1
-            label2.text = String(count)
+            if (percent!>100 || percent!<0)
+            {
+                marktext.text = "Enter a percentage between 0-100!"
+            }
+            else
+            {
+                moduletext.text = ""
+                marktext.text = ""
+                
+                modules[moduleField.text!] = Int(marksField.text!)
+                marksField.text = ""
+                moduleField.text = ""
+                count+=1
+                label2.text = String(count)
+            }
         }
+        else{
+            marktext.text = "Enter a number!"
+        }
+        
     }
     
     @IBAction func finishButton(_ sender: Any)
@@ -64,12 +76,16 @@ class ViewController: UIViewController {
         {
             finishlabel.text = "Enter the number of revision hours"
         }
-        else
+        if (modules.count == 0)
+        { moduletext.text = "Enter a module!" }
+        if (Int(hoursField.text!) != nil)
         {
             finishlabel.text = ""
             hours = Int(hoursField.text!) ?? 0
             performSegue(withIdentifier: "toDetail", sender: nil)
         }
+        else
+        {   finishlabel.text = "Invalid entry"}
     }
     
     
